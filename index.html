@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Cæserchiffer</title>
+</head>
+<style type="text/css">
+	body {
+		overflow: hidden;
+		margin: 0;
+		border: 0;
+		padding: 0;
+		background-color: #333;
+		color: black;
+		font-size: 2rem;
+	}
+	
+	.mainContainer {
+		display: flex;
+		flex-direction: column;
+		width: 100vw;
+		height: 100vh;
+		justify-content: space-around;
+		align-items: center;
+	}
+
+	.rowContainer {
+		display: flex;
+		flex-direction: row;
+		width: 100vw;
+		height: 49vh;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.container {
+		display: flex;
+		flex-direction: column;
+		width: 100vw;
+		height: 49vh;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.krypt {
+		background-color: #f44336;
+	}
+
+	.dekrypt {
+		background-color: #008CBA;
+	}
+
+	input {
+		border: none;
+		width: 47vw;
+		height: 3vh;
+		font-size: 1.5rem;
+		font-family: Consolas, sans-serif;
+	}
+
+	.button {
+		width: 47vw;
+		height: 6vh;
+		border: none;
+		color: white;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 1.5rem;
+		font-family: Consolas, sans-serif;
+	}
+
+	.color1 {background-color: #008CBA;} /* Blue */
+	.color2 {background-color: #f44336;} /* Red */
+
+	textarea#styled {
+		height: 35vh;
+		width: 47vw;
+		font-size: 1.5rem;
+		font-family: Consolas, sans-serif;
+		background-position: bottom right;
+		background-repeat: no-repeat;
+		resize: none;
+	}
+</style>
+<body>
+	<div class="mainContainer">
+		<div class=rowContainer>
+			<div class="container krypt">
+				<textarea name="styled-textarea" id="styled" onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')">Enter your message here...</textarea>
+				<input type="number" name="tallKrypt" value="3">
+				<button class="button color1">Krypter</button>
+			</div>
+			<div class="container krypt">
+				<p id="kryptTekstOmråde"></p>
+			</div>
+		</div>
+		<div class=rowContainer>
+			<div class="container dekrypt">
+				<textarea name="styled-textarea" id="styled" onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')">Enter your message here...</textarea>
+				<input type="number" name="tallDekrypt" value="3">
+				<button class="button color2">Dekrypter</button>
+			</div>
+			<div class="container dekrypt">
+				<p id="dekryptTekstOmråde"></p>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	var pAll = document.querySelectorAll('p')
+	var textareas = document.querySelectorAll('#styled')
+	var btnAll = document.querySelectorAll('button')
+	btnAll[0].addEventListener('click',kryptFunc)
+	btnAll[1].addEventListener('click',dekryptFunc)
+
+	for (var textarea of textareas){
+		textarea.addEventListener('dblclick',pasteText)
+	}
+	for (var p of pAll){
+		p.addEventListener('click',copyText)
+	}
+
+	function kryptFunc(e) {
+		var tekst = textareas[0].value
+		var alfabetet = "qwertyuiopåasdfghjkløæzxcvbnm"
+		var tall = Number(document.querySelector('input[name="tallKrypt"]').value)
+		var nyTekst = ""
+		for (var bokstav of tekst){
+			bokstav = bokstav.toLowerCase()
+			if (alfabetet.indexOf(bokstav) != -1) {
+				nyTekst += alfabetet[(alfabetet.indexOf(bokstav)+tall)%alfabetet.length]
+			} else {
+				nyTekst += bokstav
+			}
+		}
+		document.querySelector('#kryptTekstOmråde').innerHTML = nyTekst
+	}
+
+	function dekryptFunc(e) {
+		var tekst = textareas[1].value
+		var alfabetet = "qwertyuiopåasdfghjkløæzxcvbnm".split("").reverse().join("")
+		var tall = Number(document.querySelector('input[name="tallDekrypt"]').value)
+		var nyTekst = ""
+		for (var bokstav of tekst){
+			bokstav = bokstav.toLowerCase()
+			if (alfabetet.indexOf(bokstav) != -1) {
+				nyTekst += alfabetet[(alfabetet.indexOf(bokstav)+tall)%alfabetet.length]
+			} else {
+				nyTekst += bokstav
+			}
+		}
+		document.querySelector('#dekryptTekstOmråde').innerHTML = nyTekst
+	}
+
+	function setbg(color)
+	{
+		for (var textarea of textareas){
+			textarea.style.background=color
+		}
+	}
+
+	function copyText(e) {
+		const elem = document.createElement('textarea');
+		elem.value = e.path[0].innerHTML;
+		document.body.appendChild(elem);
+		elem.select();
+		document.execCommand('copy');
+		document.body.removeChild(elem);
+	}
+
+	function pasteText(e) {
+	   const elem = e.path[0];
+	   navigator.clipboard.readText().finally(
+	   	clipText => elem.innerText = clipText);
+	}
+</script>
+</html>
